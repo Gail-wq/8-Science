@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fossil Factory: from death to discovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eceee8; --surface:#f8f9f5; --surface2:#e2e6de; --ink:#23292d; --muted:#5b656b; --line:#d1d7ce;
+  --accent:#167c78; --accent-ink:#ffffff; --amber:#c9851a; --good:#2f8a4a; --bad:#b4442f;
+  --sand1:#e4c58f; --sand2:#cfa668; --sand3:#b3854d; --sand4:#8e6238;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#161b1e; --surface:#1f262a; --surface2:#2a3237; --ink:#e8ece6; --muted:#9ba7a9; --line:#334046;
+    --accent:#4fc1b8; --accent-ink:#0f1416; --amber:#f0b24a; --good:#6cc283; --bad:#ec7a63;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161b1e; --surface:#1f262a; --surface2:#2a3237; --ink:#e8ece6; --muted:#9ba7a9; --line:#334046;
+  --accent:#4fc1b8; --accent-ink:#0f1416; --amber:#f0b24a; --good:#6cc283; --bad:#ec7a63;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5}
+h1,h2,h3{font-family:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.1;margin:0}
+button{font:inherit;color:inherit}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 18px 48px}
+
+/* header: the title sits on rock strata */
+.top{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.strata{position:absolute;inset:auto 0 0 0;height:22px;display:flex;flex-direction:column}
+.strata i{flex:1;display:block}
+.strata i:nth-child(1){background:var(--sand1)}.strata i:nth-child(2){background:var(--sand2)}.strata i:nth-child(3){background:var(--sand3)}.strata i:nth-child(4){background:var(--sand4)}
+.top-inner{max-width:1140px;margin:0 auto;padding:22px 18px 40px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+.brand h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.02em}
+.brand h1 span{display:inline-block;transform:rotate(-12deg);margin-right:.15em}
+.brand p{margin:6px 0 0;color:var(--muted);max-width:52ch}
+.hdr-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:700;font-size:.92rem}
+
+.btn{cursor:pointer;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:9px 16px;font-weight:700}
+.btn:hover{filter:brightness(1.15)}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn.go{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.4;cursor:default}
+
+.steps{display:flex;gap:6px;margin:18px 0 22px;flex-wrap:wrap}
+.steps button{cursor:pointer;background:transparent;border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:700;color:var(--muted)}
+.steps button.on{border-color:var(--ink);color:var(--ink);background:var(--surface)}
+.steps button:disabled{opacity:.45;cursor:default}
+
+.sec-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.sec-head h2{font-size:clamp(1.5rem,3vw,2rem)}
+.hint{color:var(--muted);margin:0 0 16px}
+
+.grid{display:grid;gap:12px}
+.animals{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.acard{cursor:pointer;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px;min-height:150px}
+.acard:hover{border-color:var(--accent)}
+.acard .em{font-size:2.6rem;line-height:1;height:2.8rem}
+.em svg{width:1em;height:1em}
+.acard b{font-size:1rem;line-height:1.25}
+.acard small{color:var(--muted);font-size:.8rem;line-height:1.3}
+.acard .count{margin-top:auto;font-size:.78rem;color:var(--accent);font-weight:700}
+
+.scen{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.scard{cursor:pointer;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;position:relative}
+.scard:hover:not(:disabled){border-color:var(--accent)}
+.scard .row{display:flex;gap:10px;align-items:center}
+.scard .ic{font-size:1.8rem;line-height:1}
+.scard b{font-size:1.02rem;line-height:1.25}
+.scard p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.35}
+.scard .proc{align-self:flex-start;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--surface2)}
+.scard .done{position:absolute;top:10px;right:12px;font-size:.75rem;font-weight:700;color:var(--good)}
+.scard:disabled{cursor:default;opacity:.55;border-style:dashed}
+.scard .why{font-size:.82rem;font-style:italic;color:var(--bad)}
+.chosen{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 14px;font-weight:700}
+.chosen .em{font-size:1.6rem;line-height:1}
+.chosen button{cursor:pointer;border:0;background:var(--surface2);border-radius:999px;padding:4px 12px;font-weight:700}
+
+/* journey */
+.journey{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.journey{grid-template-columns:1fr}}
+.scene{position:relative;width:100%;aspect-ratio:600/340;border-radius:16px;overflow:hidden;container-type:inline-size;border:2px solid var(--ink);background:#7cc6e6}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.animal{position:absolute;left:50%;top:67.65%;transform:translate(-50%,-92%);pointer-events:none;transition:left .9s ease}
+.animal.walk{left:80%}
+.animal.sinking{animation:sink 1.5s ease-out}
+@keyframes sink{from{top:18%;opacity:.4}to{top:67.65%;opacity:1}}
+.glyph{display:inline-block;position:relative;font-size:calc(var(--s,1)*11cqw);line-height:1;transition:filter .9s,transform .9s,opacity .9s}
+.glyph svg{width:1em;height:1em;display:block}
+.glyph .bones{position:absolute;left:50%;top:50%;font-size:.36em;transform:translate(-50%,-50%)}
+.glyph.teeth{font-size:calc(var(--s,1)*5cqw);letter-spacing:.1em}
+.st-dead .glyph{transform:rotate(180deg);filter:saturate(.7)}
+.st-skeleton .glyph,.st-bleached .glyph{transform:rotate(180deg);filter:grayscale(1) brightness(1.9) contrast(.8)}
+.st-bleached .glyph{opacity:.6}
+.st-fossil .glyph{transform:rotate(180deg);filter:grayscale(1) sepia(.7) brightness(.72) contrast(1.35)}
+.st-mould .glyph{transform:rotate(180deg);filter:brightness(0);opacity:.55}
+.st-cast .glyph{transform:rotate(180deg);filter:grayscale(1) sepia(1) hue-rotate(-25deg) saturate(1.6) brightness(.8)}
+.st-amber .glyph{transform:rotate(200deg);filter:sepia(.7) saturate(1.5) brightness(.9)}
+.st-frozen .glyph{transform:rotate(180deg);filter:saturate(.75) brightness(1.05)}
+.st-mummy .glyph{transform:rotate(180deg) scale(.9);filter:sepia(1) saturate(.8) brightness(.62) contrast(1.25)}
+.st-bogbody .glyph{transform:rotate(180deg);filter:sepia(1) saturate(1.6) brightness(.45)}
+.st-film .glyph{transform:rotate(180deg) scaleY(.85);filter:brightness(0);opacity:.78}
+.st-pyrite .glyph{transform:rotate(180deg);filter:grayscale(1) sepia(1) saturate(5) brightness(1.15) contrast(1.1)}
+.st-silica .glyph{transform:rotate(180deg);animation:opal 5s linear infinite}
+@keyframes opal{from{filter:grayscale(.35) brightness(1.35) saturate(1.7) hue-rotate(0deg)}to{filter:grayscale(.35) brightness(1.35) saturate(1.7) hue-rotate(360deg)}}
+.st-crust .glyph{transform:rotate(180deg);filter:grayscale(1) brightness(1.55) contrast(.55)}
+.st-tarbone .glyph{transform:rotate(180deg);filter:grayscale(1) sepia(1) brightness(.42) contrast(1.4)}
+.st-coprolite .glyph{filter:grayscale(1) sepia(.6) brightness(.78) contrast(1.2)}
+.st-gone .glyph{opacity:0;transform:scale(.5)}
+.glyph.teeth{transform:none!important}
+.tlabel{position:absolute;top:10px;left:10px;background:rgba(20,24,26,.78);color:#fff;font-weight:700;font-size:clamp(.72rem,2.4cqw,.95rem);padding:4px 10px;border-radius:999px}
+.xlabel{position:absolute;bottom:8px;right:10px;background:rgba(255,255,255,.82);color:#23292d;font-weight:700;font-size:clamp(.65rem,2cqw,.8rem);padding:2px 8px;border-radius:6px}
+
+/* svg fx */
+.lbl{font:700 15px "Atkinson Hyperlegible",system-ui,sans-serif;fill:#fff;stroke:rgba(0,0,0,.65);stroke-width:4px;paint-order:stroke;stroke-linejoin:round}
+.p-fall{animation:fall 3s linear infinite}
+@keyframes fall{from{transform:translateY(-70px);opacity:0}15%{opacity:1}to{transform:translateY(80px);opacity:0}}
+.p-rise{animation:rise 2.6s ease-in infinite}
+@keyframes rise{from{transform:translateY(10px);opacity:0}20%{opacity:.9}to{transform:translateY(-70px);opacity:0}}
+.p-blow{animation:blow 2.2s linear infinite}
+@keyframes blow{from{transform:translateX(-90px);opacity:0}20%{opacity:1}to{transform:translateX(110px);opacity:0}}
+.p-seep{animation:seep 4s linear infinite}
+@keyframes seep{from{transform:translateY(-40px);opacity:0}20%{opacity:1}to{transform:translateY(70px);opacity:0}}
+.p-drip{animation:drip 1.8s ease-in infinite}
+@keyframes drip{from{transform:translateY(0);opacity:1}90%{opacity:1}to{transform:translateY(150px);opacity:0}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.8);opacity:.5}}
+.bob{animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.lunge{animation:lunge 2s ease-in-out infinite}
+@keyframes lunge{50%{transform:translateX(-22px)}}
+.wave{animation:wave 3s ease-in-out infinite alternate}
+@keyframes wave{to{transform:translateX(-30px)}}
+.shimmer{animation:bob 1.8s ease-in-out infinite}
+
+.stepper{list-style:none;margin:12px 0 0;padding:0;display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.stepper button{cursor:pointer;white-space:nowrap;background:var(--surface);border:2px solid var(--line);border-radius:10px;padding:5px 10px;font-size:.82rem;font-weight:700;color:var(--muted)}
+.stepper button.seen{color:var(--ink)}
+.stepper button.on{border-color:var(--accent);color:var(--ink);background:var(--surface2)}
+.stepper .end{border-style:dashed}
+
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:20px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--surface2)}
+.chip.time{background:var(--ink);color:var(--bg)}
+.kicker{margin:0 0 4px;color:var(--muted);font-weight:700;font-size:.92rem}
+.panel h2{font-size:1.65rem;margin-bottom:10px}
+.panel .body{margin:0 0 14px;max-width:60ch}
+.note{border-left:4px solid var(--amber);background:var(--surface2);padding:10px 12px;border-radius:0 10px 10px 0;margin-bottom:14px;font-size:.95rem}
+.nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.result .tag{display:inline-block;font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);margin-bottom:12px}
+.result .tag.none{background:var(--bad);color:#fff}
+.result dl{margin:0 0 12px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:.95rem}
+.result dt{font-weight:700;color:var(--muted)}
+.result dd{margin:0}
+.chain{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:0 0 16px;font-size:.8rem}
+.chain span{background:var(--surface2);border-radius:6px;padding:2px 7px;font-weight:700}
+.chain em{color:var(--muted);font-style:normal}
+.quiz{border-top:2px dashed var(--line);padding-top:14px;margin-bottom:14px}
+.quiz h3{font-size:1.1rem;margin-bottom:8px}
+.qopt{display:block;width:100%;text-align:left;cursor:pointer;margin:6px 0;padding:9px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);font-size:.95rem}
+.qopt:hover:not(:disabled){border-color:var(--accent)}
+.qopt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--bg))}
+.qopt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.qopt:disabled{cursor:default}
+.qfeed{margin:8px 0 0;font-size:.95rem}
+
+/* collection */
+.col{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.ccard{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.ccard.locked{border-style:dashed;opacity:.7}
+.ccard .row{display:flex;gap:10px;align-items:center}
+.ccard .ic{font-size:1.6rem}
+.ccard p{margin:0;font-size:.88rem;color:var(--muted)}
+.ccard .found{font-size:1.4rem;line-height:1.2;display:flex;flex-wrap:wrap;gap:2px}
+.ccard .found svg{width:1em;height:1em}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.9rem;margin:0 0 14px}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <h1><span>🦴</span>Fossil Factory</h1>
+      <p>Choose an animal, decide how and where it dies, then follow every step it takes to become a fossil, or to vanish without a trace.</p>
+    </div>
+    <div class="hdr-actions">
+      <span class="pill" id="prog">0 of 16 endings found</span>
+      <button class="btn alt" id="btn-col">🗂️ My fossil collection</button>
+    </div>
+  </div>
+  <div class="strata" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+</header>
+
+<div class="wrap">
+  <nav class="steps" id="steps" aria-label="Game steps">
+    <button data-v="animals">1. Pick an animal</button>
+    <button data-v="scen">2. Choose its fate</button>
+    <button data-v="journey">3. Fossil journey</button>
+  </nav>
+
+  <section id="v-animals">
+    <div class="sec-head">
+      <h2>Pick an animal</h2>
+      <button class="btn go" id="surprise">🎲 Surprise me</button>
+    </div>
+    <p class="hint">“mya” means million years ago. Each animal can only meet the fates that fit where and when it lived.</p>
+    <div class="grid animals" id="animal-grid"></div>
+  </section>
+
+  <section id="v-scen" hidden>
+    <div class="sec-head">
+      <h2>How and where does it die?</h2>
+      <div class="chosen" id="chosen"></div>
+    </div>
+    <p class="hint">Every fate leads to a different way of becoming a fossil, or not becoming one at all. Faded cards don’t fit your animal; read why.</p>
+    <div class="grid scen" id="scen-grid"></div>
+  </section>
+
+  <section id="v-journey" hidden>
+    <div class="journey">
+      <div>
+        <div class="scene" id="scene" role="img" aria-label="Cross-section illustration of the fossil process">
+          <svg id="bg" viewBox="0 0 600 340" preserveAspectRatio="none"></svg>
+          <div class="animal" id="animal"></div>
+          <svg id="fg" viewBox="0 0 600 340" preserveAspectRatio="none"></svg>
+          <div class="tlabel" id="tlabel"></div>
+          <div class="xlabel" id="xlabel" hidden>Cross-section view</div>
+        </div>
+        <ol class="stepper" id="stepper"></ol>
+      </div>
+      <div class="panel" id="panel" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="v-col" hidden>
+    <div class="sec-head">
+      <h2>My fossil collection</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn alt" id="reset">Clear progress</button>
+        <button class="btn" id="col-back">Back to the game</button>
+      </div>
+    </div>
+    <p class="legend"><span id="col-sum"></span><span>⭐ = quiz answered correctly</span></p>
+    <div class="grid col" id="col-grid"></div>
+  </section>
+</div>
+
+<script>
+const TRILO = '<svg viewBox="0 0 40 48" aria-hidden="true"><path d="M20 3C8 3 3 10 3 16l3 2-1 22q15 10 30 0l-1-22 3-2c0-6-5-13-17-13z" fill="#9a7552"/><path d="M20 4c-5 0-7 5-7 10l2 28q5 3 10 0l2-28c0-5-2-10-7-10z" fill="#76563a"/><g stroke="#4f3824" stroke-width="1.3"><path d="M6 21h28M6 24.5h28M6 28h28M6 31.5h28M6 35h28M7 38.5h26"/></g><circle cx="11" cy="12" r="2.2" fill="#2e2117"/><circle cx="29" cy="12" r="2.2" fill="#2e2117"/></svg>';
+
+const ANIMALS = [
+  {id:'trex',  name:'Tyrannosaurus rex', n:'T. rex', e:'🦖', era:'Late Cretaceous, 68–66 mya', size:1.2, bones:true, hab:'land'},
+  {id:'sauro', name:'Brachiosaurus', n:'Brachiosaurus', e:'🦕', era:'Late Jurassic, 154–150 mya', size:1.3, bones:true, hab:'land'},
+  {id:'mammoth',name:'Woolly mammoth', n:'woolly mammoth', e:'🦣', era:'Ice Age, 400,000–4,000 years ago', size:1.25, bones:true, hab:'land'},
+  {id:'sabre', name:'Smilodon (sabre-toothed cat)', n:'Smilodon', e:'🐅', era:'Ice Age, 2.5 mya–10,000 years ago', size:1.05, bones:true, hab:'land'},
+  {id:'bird',  name:'Bird (like Archaeopteryx)', n:'bird', e:'🐦', era:'Birds since the Late Jurassic, 150 mya', size:.7, bones:true, hab:'land'},
+  {id:'croc',  name:'Ancient crocodile', n:'crocodile', e:'🐊', era:'Since the Triassic, 230 mya', size:1.1, bones:true, hab:'fresh'},
+  {id:'lizard',name:'Lizard', n:'lizard', e:'🦎', era:'Since the Jurassic, 190 mya', size:.65, bones:true, hab:'land'},
+  {id:'frog',  name:'Frog', n:'frog', e:'🐸', era:'Since the Jurassic, 190 mya', size:.6, bones:true, hab:'fresh'},
+  {id:'insect',name:'Insect (mosquito)', n:'insect', e:'🦟', era:'Insects since about 400 mya', size:.45, bones:false, hab:'land'},
+  {id:'fish',  name:'Ancient fish', n:'fish', e:'🐟', era:'Fish since about 500 mya', size:.8, bones:true, hab:'sea'},
+  {id:'shark', name:'Megalodon (giant shark)', n:'megalodon', e:'🦈', era:'Miocene–Pliocene, 23–3.6 mya', size:1.2, bones:false, hab:'sea'},
+  {id:'squid', name:'Squid-like cephalopod', n:'cephalopod', e:'🦑', era:'Soft-bodied, since the Jurassic', size:.8, bones:false, hab:'sea'},
+  {id:'ammonite',name:'Ammonite', n:'ammonite', e:'🐚', era:'Devonian–Cretaceous, 400–66 mya', size:.7, bones:false, hab:'sea'},
+  {id:'trilo', name:'Trilobite', n:'trilobite', e:TRILO, era:'Cambrian–Permian, 521–252 mya', size:.7, bones:false, hab:'sea'}
+];
+
+const SCEN = [
+{ id:'sea', icon:'🌊', name:'Sinks to the sea floor', d:'Dies and sinks to the bottom of a shallow sea.', proc:'Permineralisation',
+  allowed:['trex','sauro','fish','shark','ammonite','trilo','croc'],
+  no:'Only sea creatures, or bodies washed out to sea, end up on the sea floor.',
+  type:'Petrified bones or shell', cat:'Body fossil', needs:'Hard parts, quick burial under sediment, mineral-rich groundwater', ex:'Jurassic Coast, England: ammonites and ichthyosaurs',
+  notes:{trex:'Land animals sometimes end up in sea rocks: their bodies fill with gas, float out to sea, then sink.', sauro:'Land animals sometimes end up in sea rocks: their bodies fill with gas, float out to sea, then sink.', shark:'A shark’s skeleton is made of cartilage, which rots easily. Usually only its tough teeth become fossils, which is why most megalodon fossils are teeth!'},
+  stages:[
+    {h:'Death', t:'Day 1', env:'sea', a:'dead', fx:['sink'], x:'The {A} dies and its body sinks to the bottom of a shallow sea. Most dead animals are eaten or rot away, but this one is about to get lucky.'},
+    {h:'Decay', t:'Weeks later', env:'sea', a:'skeleton', fx:['scav','bacteria'], x:'Scavengers and bacteria eat the soft parts: skin, muscle and organs. Only the hard parts, like bones, teeth or shell, are left behind.'},
+    {h:'Burial', t:'Years later', env:'sea', a:'skeleton', b:2, fx:['sediment'], x:'Sand and mud settle on top, burying the remains. Quick burial protects them from scavengers, waves and oxygen.'},
+    {h:'Rock forms', t:'Thousands of years', env:'sea', a:'skeleton', b:4, fx:['pressure'], x:'More and more layers pile up. Their weight squeezes the lower layers until they harden into sedimentary rock such as limestone or shale.'},
+    {h:'Permineralisation', t:'Millions of years', env:'sea', a:'fossil', b:5, fx:['minerals'], x:'Groundwater carrying dissolved minerals (like silica and calcite) seeps through the rock. The minerals fill the tiny holes in the bones or shell and slowly replace them. The remains turn to stone.'},
+    {h:'Uplift & erosion', t:'Millions of years', env:'exposed', a:'fossil', fx:['uplift'], x:'Movements of Earth’s crust push the old sea floor up to become dry land. Wind, rain and rivers wear away the rock above the fossil.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'fossil', fx:['dig'], x:'A palaeontologist spots part of the fossil poking out of a cliff. They carefully dig it out, wrap it in a plaster jacket and take it to a museum.'}
+  ],
+  quiz:{q:'What happens during permineralisation?', o:['Minerals from groundwater fill and replace the hard parts','The body freezes solid in the ground','The animal is coated in tree resin'], why:'Mineral-rich water seeps into tiny spaces in bone or shell and slowly turns it to stone.'}
+},
+{ id:'flood', icon:'⛈️', name:'Swept away in a river flood', d:'Drowns in a flash flood and is buried by river sand.', proc:'Mould and cast',
+  allowed:['trex','sauro','mammoth','sabre','croc','fish','bird','lizard','frog'],
+  no:'This creature didn’t live on land or in rivers.',
+  type:'Mould and cast', cat:'Body fossil', needs:'Rapid burial in sand, then groundwater that dissolves the bones and later refills the space', ex:'Dinosaur Provincial Park, Canada; shell moulds and casts all over the world',
+  stages:[
+    {h:'Death', t:'Day 1', env:'river', a:'dead', fx:['flood'], x:'A sudden flood sweeps the {A} into a fast-flowing river, where it drowns.'},
+    {h:'Burial', t:'Days later', env:'river', a:'dead', b:2, fx:['sediment'], x:'As the floodwater slows down, it dumps huge amounts of sand and silt, burying the body before scavengers can reach it.'},
+    {h:'Decay', t:'Years later', env:'river', a:'skeleton', b:3, fx:['bacteria'], x:'Underground, bacteria break down the soft tissue. The bones are left, packed in sand.'},
+    {h:'Rock forms', t:'Thousands of years', env:'river', a:'skeleton', b:5, fx:['pressure'], x:'The weight of new layers presses the sand together until it hardens into sandstone around the skeleton.'},
+    {h:'Mould', t:'Millions of years', env:'river', a:'mould', b:5, fx:['water'], x:'Slightly acidic groundwater slowly dissolves the bones completely, leaving a hollow, bone-shaped space in the rock. This hollow is called a mould.'},
+    {h:'Cast', t:'Millions of years', env:'river', a:'cast', b:5, fx:['minerals'], x:'Later, mineral-rich water fills the mould. The minerals harden into a rock copy of the bones, called a cast.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'cast', fx:['dig'], x:'Erosion exposes the rock. When a fossil hunter splits it open, they find the cast inside and the mould’s imprint in the rock around it.'}
+  ],
+  quiz:{q:'What is the difference between a mould and a cast?', o:['A mould is a hollow imprint; a cast is a mould filled with minerals','A mould is made of ice; a cast is made of amber','There is no difference'], why:'The mould is the empty space left when the remains dissolve. Fill that space with minerals and you get a cast.'}
+},
+{ id:'amber', icon:'🌲', name:'Trapped in sticky tree resin', d:'Gets stuck in resin oozing from a tree trunk.', proc:'Amber preservation',
+  allowed:['insect','lizard','frog','bird'],
+  no:'Only small creatures can be swallowed up by sticky tree resin.',
+  type:'Creature in amber', cat:'Body fossil (original body kept)', needs:'Small size, sticky resin, burial, then millions of years of heat and pressure', ex:'Baltic amber, Europe; Burmese amber containing a feathered dinosaur tail',
+  notes:{bird:'Baby birds, and even the feathered tail of a small dinosaur, have been found in 99-million-year-old amber from Myanmar.'},
+  stages:[
+    {h:'Trapped', t:'Day 1', env:'forest', a:'alive', fx:['resin'], x:'The {A} is on the bark of a conifer tree when it gets stuck in a blob of sticky resin oozing from the trunk.'},
+    {h:'Sealed in', t:'Hours later', env:'forest', a:'dead', fx:['resinFull'], x:'More resin flows over it and seals it in completely. No air can get in, so the bacteria that cause rotting can’t do their work.'},
+    {h:'Burial', t:'Hundreds of years', env:'forest', a:'amber', b:1, x:'The resin blob falls to the forest floor and is buried under soil and leaves. It slowly starts to harden.'},
+    {h:'Copal', t:'Thousands of years', env:'forest', a:'amber', b:3, fx:['pressure'], x:'Buried deeper, the resin loses its oily chemicals and becomes a harder material called copal.'},
+    {h:'Amber', t:'Millions of years', env:'forest', a:'amber', b:5, fx:['heat'], x:'Heat and pressure over millions of years turn the copal into amber: a golden, glassy fossil resin. The {A} inside is preserved in 3D, sometimes down to tiny hairs, scales or feathers.'},
+    {h:'Discovery', t:'Today', env:'beach', a:'amber', fx:['dig'], x:'Erosion frees the amber and it washes up on a beach, or it is dug out of a mine. A collector holds it up to the light and sees the {A} inside!'}
+  ],
+  quiz:{q:'Why doesn’t a creature trapped in resin rot away?', o:['Resin seals out air, so decay bacteria can’t survive','Resin is freezing cold','The creature turns into rock straight away'], why:'With no air, the bacteria and fungi that cause decay can’t grow.'}
+},
+{ id:'tar', icon:'⚫', name:'Stuck in a tar pit', d:'Wanders into a pool of sticky natural asphalt.', proc:'Asphalt (tar) preservation',
+  allowed:['mammoth','sabre','bird','insect','lizard'],
+  no:'Tar pits that hold fossils are young (tens of thousands of years old) and trap land animals of the Ice Age.',
+  type:'Tar-soaked original bone', cat:'Body fossil (original bone kept)', needs:'A natural asphalt seep that traps animals and stops decay', ex:'La Brea Tar Pits, Los Angeles, USA',
+  stages:[
+    {h:'Trapped', t:'Day 1', env:'tar', a:'alive', fx:['tar','leaves'], x:'The {A} steps onto what looks like solid ground, but it’s a pool of sticky natural asphalt (tar) hidden under leaves, dust and water. Its feet are stuck fast.'},
+    {h:'Predator trap', t:'Hours later', env:'tar', a:'alive', fx:['tar','predator'], x:'Its struggles attract predators and scavengers, which often get stuck too! That’s why tar pits contain far more meat-eaters than plant-eaters.'},
+    {h:'Death', t:'Days later', env:'tar', a:'dead', fx:['tar'], x:'The {A} becomes exhausted and dies. Its body slowly sinks into the tar.'},
+    {h:'Soaked in tar', t:'Years later', env:'tar', a:'skeleton', fx:['tar','tarFull'], x:'The soft parts rot, but the bones are soaked in tar. The oily tar keeps out water and bacteria, so the bones don’t decay. They stay real bone (not stone) but are stained dark brown.'},
+    {h:'Burial', t:'Tens of thousands of years', env:'tar', a:'tarbone', b:3, fx:['tar'], x:'More bones, tar and sediment pile up on top, burying the remains in a jumbled heap.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'tarbone', fx:['dig'], x:'Excavators dig through the sticky deposit and find thousands of bones jumbled together, from huge mammals right down to insects.'}
+  ],
+  quiz:{q:'Why are there more predator fossils than prey fossils in tar pits?', o:['Predators came to eat stuck animals and got trapped themselves','Predators liked to bathe in tar','Prey animals were too light to sink'], why:'One stuck plant-eater could lure many hungry meat-eaters into the same trap.'}
+},
+{ id:'ice', icon:'🧊', name:'Freezes in the permafrost', d:'Dies in freezing Ice Age mud and stays frozen.', proc:'Freezing',
+  allowed:['mammoth','sabre','bird'],
+  no:'Permafrost only preserves Ice Age animals from the last few tens of thousands of years. Older bodies thawed and rotted long ago.',
+  type:'Frozen body', cat:'Body fossil (original body kept)', needs:'Freezing soon after death, and ground that never thaws', ex:'Yuka and Lyuba the mammoths, Siberia',
+  notes:{sabre:'A frozen sabre-toothed cat cub found in Siberian permafrost was described by scientists in 2024, with its fur still on!'},
+  stages:[
+    {h:'Trapped', t:'Day 1', env:'ice', a:'alive', fx:['snow'], x:'During the Ice Age, the {A} gets stuck in freezing mud or falls into a crack in the frozen ground.'},
+    {h:'Death', t:'Hours later', env:'ice', a:'dead', fx:['snow'], x:'It dies of cold or exhaustion. It is so cold that the body freezes before it can rot.'},
+    {h:'Burial', t:'Years later', env:'ice', a:'frozen', b:2, fx:['ice'], x:'Snow, mud and silt cover the body. The ground stays frozen all year round. This is called permafrost.'},
+    {h:'Natural freezer', t:'Thousands of years', env:'ice', a:'frozen', b:4, fx:['ice'], x:'Locked in a natural freezer, the body is kept almost whole: skin, hair, muscles, even its last meal. This isn’t stone; it’s the original body!'},
+    {h:'Thaw', t:'Today', env:'ice', a:'frozen', b:1, fx:['ice','melt'], x:'As the climate warms, the permafrost thaws and riverbanks crumble, exposing the frozen body.'},
+    {h:'Discovery', t:'Today', env:'ice', a:'frozen', fx:['dig'], x:'Scientists race to study it before it rots. Frozen remains can even contain ancient DNA.'}
+  ],
+  quiz:{q:'What makes a frozen fossil different from most fossils?', o:['It keeps the original body, including skin and hair','It is made completely of rock','It is always millions of years old'], why:'Freezing stops decay, so the actual body survives instead of being replaced by minerals.'}
+},
+{ id:'mummy', icon:'🏜️', name:'Dries out in a desert cave', d:'Dies in a cave where the air is bone-dry.', proc:'Natural mummification',
+  allowed:['sabre','bird','lizard'],
+  no:'Natural mummies need very dry land, and only survive from fairly recent times.',
+  type:'Natural mummy', cat:'Body fossil (original body kept)', needs:'Very dry air and shelter from scavengers and weather', ex:'Mylodon Cave, Chile: giant ground sloth skin and dung',
+  stages:[
+    {h:'Shelter', t:'Day 1', env:'drycave', a:'alive', x:'The {A} shelters from the heat in a cave in a very dry desert.'},
+    {h:'Death', t:'Days later', env:'drycave', a:'dead', fx:['dry'], x:'It dies inside the cave. The air is so hot and dry that the body starts drying out straight away.'},
+    {h:'Drying out', t:'Weeks later', env:'drycave', a:'mummy', fx:['dry'], x:'Without water, bacteria and fungi can’t grow, so decay stops. Skin, fur and muscle shrink and harden like leather. This is a natural mummy.'},
+    {h:'Burial', t:'Thousands of years', env:'drycave', a:'mummy', b:2, fx:['dust'], x:'Dust and dung build up on the cave floor, burying the body. The cave keeps it dry and protected.'},
+    {h:'Discovery', t:'Today', env:'drycave', a:'mummy', fx:['dig'], x:'Explorers find the remains with skin and hair still attached. Scientists can even work out its diet from dried dung nearby!'}
+  ],
+  quiz:{q:'Why does decay stop in a very dry place?', o:['Bacteria and fungi need water to grow','Sunlight turns bodies to stone','Sand eats the bacteria'], why:'Decay is done by living things, and they need moisture.'}
+},
+{ id:'ash', icon:'🌋', name:'Buried by a volcanic eruption', d:'Smothered by falling volcanic ash.', proc:'Volcanic ash burial',
+  allowed:['trex','sauro','mammoth','sabre','bird','croc','lizard'],
+  no:'This kind of ash burial happens to land animals.',
+  type:'Complete 3D skeleton in volcanic rock', cat:'Body fossil', needs:'A sudden, thick fall of fine ash, then mineral replacement', ex:'Ashfall Fossil Beds, Nebraska, USA; Jehol fossils, China',
+  stages:[
+    {h:'Eruption', t:'Day 1', env:'volcano', a:'alive', fx:['ash'], x:'A nearby volcano erupts. Clouds of fine volcanic ash fill the sky and begin falling like grey snow.'},
+    {h:'Death', t:'Days later', env:'volcano', a:'dead', b:1, fx:['ash'], x:'The {A} breathes in the ash and dies. The ash keeps falling.'},
+    {h:'Burial', t:'Weeks later', env:'volcano', a:'dead', b:3, fx:['ash'], x:'Thick layers of ash bury the body very quickly, sometimes along with many other animals, all in the place they died.'},
+    {h:'Rock forms', t:'Thousands of years', env:'volcano', a:'skeleton', b:5, fx:['pressure'], x:'The soft parts rot, but the skeleton stays in place. The ash is squashed into a rock called tuff.'},
+    {h:'Mineral replacement', t:'Millions of years', env:'volcano', a:'fossil', b:5, fx:['minerals'], x:'Minerals from the ash dissolve in groundwater and replace the bones. Because the ash is so fine, whole 3D skeletons can survive, sometimes even with feathers!'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'fossil', fx:['dig'], x:'Erosion exposes the ash layers. Scientists find whole skeletons lying exactly where the animals died.'}
+  ],
+  quiz:{q:'Why can volcanic ash preserve such complete skeletons?', o:['It buries animals very quickly, protecting them from scavengers','It is hot enough to cook the bones hard','It contains tree resin'], why:'Fast, deep burial keeps skeletons together and away from scavengers and weather.'}
+},
+{ id:'bog', icon:'🌿', name:'Sinks into a peat bog', d:'Gets stuck in a cold, soggy, acidic bog.', proc:'Bog preservation',
+  allowed:['mammoth','sabre','bird','frog','fish'],
+  no:'Peat bogs are young (thousands of years old) and trap land or freshwater animals.',
+  type:'Bog-preserved body', cat:'Body fossil (original body kept)', needs:'Acidic, cold, low-oxygen water and sphagnum moss', ex:'Mastodons in North American bogs; bog bodies in northern Europe',
+  stages:[
+    {h:'Trapped', t:'Day 1', env:'bog', a:'alive', x:'The {A} wanders into a soggy peat bog and gets stuck in the soft, waterlogged ground.'},
+    {h:'Death', t:'Hours later', env:'bog', a:'dead', fx:['bubbles'], x:'It sinks into the cold, dark water and dies.'},
+    {h:'Pickled', t:'Years later', env:'bog', a:'bogbody', b:2, fx:['acid'], x:'Bog water is acidic, cold and has very little oxygen. Chemicals from sphagnum moss tan the skin like leather and stop bacteria from rotting the body.'},
+    {h:'Bones soften', t:'Hundreds of years', env:'bog', a:'bogbody', b:3, fx:['acid'], x:'The acid slowly dissolves the minerals in the bones, so they turn soft and rubbery. The skin, hair and stomach contents can survive.'},
+    {h:'Peat builds up', t:'Thousands of years', env:'bog', a:'bogbody', b:5, x:'Dead moss piles up into thick layers of peat, burying the body deeper and deeper.'},
+    {h:'Discovery', t:'Today', env:'bog', a:'bogbody', b:1, fx:['dig'], x:'Workers digging peat uncover the remarkably preserved body.'}
+  ],
+  quiz:{q:'What is unusual about bones found in peat bogs?', o:['Acid can dissolve them while the skin survives','They turn into gold','They are always bright white'], why:'Bog acid attacks bone minerals, but the same conditions tan and protect skin.'}
+},
+{ id:'lagoon', icon:'🏝️', name:'Sinks into a still, airless lagoon', d:'Settles on fine mud where nothing can live.', proc:'Carbonisation',
+  allowed:['fish','squid','insect','bird','trilo','ammonite','lizard','shark'],
+  no:'Large land animals rarely ended up in these quiet lagoons.',
+  type:'Carbon film', cat:'Body fossil', needs:'Still water with no oxygen, very fine mud, then heat and pressure', ex:'Solnhofen, Germany (Archaeopteryx); Burgess Shale, Canada',
+  notes:{shark:'Whole shark skeletons are very rare. Only places with no oxygen and very fine mud, like this lagoon, can preserve them.', bird:'This is how the famous Archaeopteryx fossils, with outlines of their feathers, were preserved at Solnhofen in Germany.', squid:'Soft-bodied animals almost never fossilise. Calm, airless lagoons are one of the few places where they can.'},
+  stages:[
+    {h:'Death', t:'Day 1', env:'lagoon', a:'dead', fx:['sink'], x:'The {A} dies and drifts into a calm, warm lagoon. Its body settles on the soft, fine mud at the bottom.'},
+    {h:'No scavengers', t:'Days later', env:'lagoon', a:'dead', b:1, fx:['noO2'], x:'The bottom water is very salty and has almost no oxygen. Nothing can live there, so no scavengers disturb the body and decay is very slow.'},
+    {h:'Fine burial', t:'Years later', env:'lagoon', a:'dead', b:3, fx:['sediment'], x:'Very fine mud gently covers it, layer by thin layer, capturing even soft parts like wings, feathers or tentacles.'},
+    {h:'Carbonisation', t:'Millions of years', env:'lagoon', a:'film', b:5, fx:['pressure','heat'], x:'Heat and pressure squeeze out liquids and gases. Only a thin black film of carbon is left: a detailed outline of the {A}. This is carbonisation.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'film', fx:['dig'], x:'Quarry workers split the fine-grained rock along its layers and reveal the dark carbon outline.'}
+  ],
+  quiz:{q:'What is left behind after carbonisation?', o:['A thin film of carbon showing the outline of the body','A hollow space in the rock','A block of ice'], why:'Heat and pressure drive off everything except carbon, which stays as a dark outline.'}
+},
+{ id:'prints', icon:'🐾', name:'Walks across soft mud (and survives!)', d:'Leaves footprints, then walks away. No death needed!', proc:'Trace fossil',
+  allowed:['trex','sauro','mammoth','sabre','bird','croc','lizard','trilo'],
+  no:'This animal didn’t walk or crawl across mud.',
+  type:'Fossil footprints (trackway)', cat:'Trace fossil', needs:'Soft mud that holds its shape, drying, then gentle burial by a different sediment', ex:'Dinosaur Ridge, Colorado; Ice Age footprints at White Sands, New Mexico',
+  notes:{trilo:'Trilobites left crawling and resting traces on the sea floor instead of footprints. Scientists give these tracks their own names!'},
+  stages:[
+    {h:'Footprints', t:'Day 1', env:'mud', a:'alive', fx:['prints','walk'], x:'The {A} walks across soft, wet mud and leaves a trail of footprints. Good news: it survives! Trace fossils record what animals did, not their bodies.'},
+    {h:'Baking', t:'Days later', env:'mud', a:'gone', fx:['prints','sun'], x:'The {A} moves on. The hot sun bakes the mud, hardening the prints so they keep their shape.'},
+    {h:'Gentle burial', t:'Weeks later', env:'mud', a:'gone', b:1, fx:['prints','sediment'], x:'Wind or a gentle flood covers the prints with a different sediment, like sand. It fills the prints without wrecking them.'},
+    {h:'Rock forms', t:'Millions of years', env:'mud', a:'gone', b:4, fx:['prints','pressure'], x:'The mud and sand harden into layers of rock with the footprints trapped between them.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'gone', fx:['prints','dig'], x:'Erosion splits the layers apart. From the prints, scientists can work out the animal’s size, how fast it moved, and whether it travelled in groups.'}
+  ],
+  quiz:{q:'Which of these is a trace fossil?', o:['A dinosaur footprint','A petrified bone','An insect in amber'], why:'Trace fossils (footprints, burrows, nests, coprolites) show behaviour, not the body itself.'}
+},
+{ id:'cave', icon:'🕳️', name:'Falls into a limestone cave', d:'Tumbles down a hidden sinkhole and can’t climb out.', proc:'Mineral encrustation',
+  allowed:['sabre','bird','lizard','frog'],
+  no:'This animal wasn’t likely to fall into a cave.',
+  type:'Bones coated in calcite', cat:'Body fossil', needs:'A sheltered cave and dripping water full of dissolved calcite', ex:'Naracoorte Caves, South Australia',
+  stages:[
+    {h:'The fall', t:'Day 1', env:'cave', a:'alive', fx:['sink'], x:'The {A} falls through a hidden hole (a sinkhole) into a dark limestone cave and can’t climb back out.'},
+    {h:'Death', t:'Days later', env:'cave', a:'dead', fx:['drip'], x:'It dies on the cave floor. Big scavengers can’t get in, so the body is left alone.'},
+    {h:'Decay', t:'Years later', env:'cave', a:'skeleton', fx:['drip','bacteria'], x:'The soft parts rot away, leaving the bones.'},
+    {h:'Encrustation', t:'Thousands of years', env:'cave', a:'crust', b:2, fx:['drip'], x:'Water dripping through the limestone carries dissolved calcite. It coats the bones in a hard crust, layer upon layer, the same way stalagmites grow.'},
+    {h:'Discovery', t:'Today', env:'cave', a:'crust', b:1, fx:['dig'], x:'Cave explorers find bones cemented into the cave floor. Some caves hold animals that fell in over hundreds of thousands of years.'}
+  ],
+  quiz:{q:'Where does the crust on cave fossils come from?', o:['Calcite carried in dripping water','Volcanic ash','Tree resin'], why:'The same dissolved calcite that builds stalactites and stalagmites coats the bones.'}
+},
+{ id:'dunes', icon:'🌪️', name:'Buried by a collapsing sand dune', d:'Buried alive in seconds by a sandstorm or dune collapse.', proc:'Sudden sand burial',
+  allowed:['trex','sauro','lizard','bird'],
+  no:'This animal didn’t live among desert sand dunes.',
+  type:'Skeleton in a “life pose”', cat:'Body fossil', needs:'Burial alive in seconds, dry sand, then cementing minerals', ex:'The “Fighting Dinosaurs” of the Gobi Desert, Mongolia',
+  stages:[
+    {h:'Sandstorm', t:'Day 1', env:'dunes', a:'alive', fx:['sand'], x:'A violent sandstorm hits, or a rain-soaked sand dune suddenly collapses!'},
+    {h:'Buried alive', t:'Minutes later', env:'dunes', a:'alive', b:3, fx:['sand'], x:'The {A} is buried in seconds, frozen in its last pose. One famous fossil shows two dinosaurs locked in a fight!'},
+    {h:'Decay', t:'Years later', env:'dunes', a:'skeleton', b:4, x:'Deep under the sand, the soft parts rot away. Dry conditions and quick burial keep the skeleton together.'},
+    {h:'Rock forms', t:'Millions of years', env:'dunes', a:'fossil', b:5, fx:['minerals'], x:'Minerals cement the sand grains into sandstone and fill the bones, turning them to stone.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'fossil', fx:['dig'], x:'Wind wears away the desert cliffs and the skeleton is found still in its “life pose”.'}
+  ],
+  quiz:{q:'Why are some dune fossils found in “life poses”?', o:['The animals were buried alive very suddenly','Scientists move the bones into poses','The sand pushes bones into new shapes'], why:'Burial was so fast the animals had no time to move, and nothing disturbed them afterwards.'}
+},
+{ id:'spring', icon:'♨️', name:'Falls into a silica hot spring', d:'Tumbles into a steaming, mineral-rich volcanic spring.', proc:'Silicification',
+  allowed:['insect','frog','lizard','bird'],
+  no:'Hot spring fossils are usually small creatures (and plants).',
+  type:'Silica (chert or opal) replacement', cat:'Body fossil', needs:'Silica-rich hot water that soaks in before decay starts', ex:'Rhynie chert, Scotland; opal fossils of Lightning Ridge, Australia',
+  stages:[
+    {h:'The fall', t:'Day 1', env:'spring', a:'alive', fx:['steam'], x:'Near a volcano, the {A} falls into a steaming hot spring full of dissolved silica.'},
+    {h:'Death', t:'Minutes later', env:'spring', a:'dead', fx:['steam','bubbles'], x:'It dies quickly in the hot water.'},
+    {h:'Silica soaks in', t:'Days later', env:'spring', a:'dead', b:1, fx:['silica'], x:'Silica in the water coats the body and seeps inside it, filling even the tiniest spaces before it can rot.'},
+    {h:'Silicification', t:'Years later', env:'spring', a:'silica', b:3, fx:['silica'], x:'The silica hardens into a glassy rock called chert, or sometimes colourful opal. The body is turned to stone in amazing detail.'},
+    {h:'Deep time', t:'Millions of years', env:'spring', a:'silica', b:5, x:'Buried and protected, the fossil keeps details as small as single cells.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'silica', fx:['dig'], x:'Scientists cut slices of the rock so thin that light shines through, then look at the preserved cells under a microscope.'}
+  ],
+  quiz:{q:'Which mineral turns the body to stone in a hot spring?', o:['Silica','Calcite from cave drips','Carbon'], why:'Hot springs near volcanoes are rich in dissolved silica, which hardens into chert or opal.'}
+},
+{ id:'pyrite', icon:'✨', name:'Buried in sulfur-rich ocean mud', d:'Buried by an underwater mudslide with no oxygen.', proc:'Pyritisation',
+  allowed:['trilo','ammonite','fish','squid','shark'],
+  no:'Pyritisation happens in sea-floor mud, and this animal didn’t live in the sea.',
+  type:'Golden pyrite fossil', cat:'Body fossil', needs:'Oxygen-free, sulfur-rich mud with iron dissolved in the water', ex:'Beecher’s Trilobite Bed, New York, USA',
+  notes:{trilo:'At Beecher’s Trilobite Bed, even trilobite legs and antennae turned to gold-coloured pyrite!', shark:'Shark teeth are sometimes found replaced by shiny pyrite.'},
+  stages:[
+    {h:'Mudslide', t:'Day 1', env:'deep', a:'dead', fx:['sink'], x:'The {A} is buried by a sudden underwater mudslide.'},
+    {h:'No oxygen', t:'Days later', env:'deep', a:'dead', b:2, fx:['noO2'], x:'The mud has no oxygen but lots of sulfur. Special bacteria break down the body and release a chemical called sulfide.'},
+    {h:'Pyritisation', t:'Years later', env:'deep', a:'pyrite', b:3, fx:['sulfur','sparkle'], x:'The sulfide reacts with iron in the water to make pyrite, also called fool’s gold. Pyrite replaces the shell, and sometimes even soft parts.'},
+    {h:'Rock forms', t:'Millions of years', env:'deep', a:'pyrite', b:5, fx:['pressure'], x:'The mud hardens into dark shale with the golden fossil inside.'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'pyrite', fx:['dig','sparkle'], x:'A collector splits the shale and finds a shiny golden fossil. Pyrite fossils must be kept dry, because damp air can make them crumble.'}
+  ],
+  quiz:{q:'What is pyrite often called?', o:['Fool’s gold','Amber','Chert'], why:'Its shiny brassy colour fooled many miners into thinking they had struck gold.'}
+},
+{ id:'eaten', icon:'🍽️', name:'Eaten by a predator', d:'Gulped down by something bigger and hungrier.', proc:'Coprolite',
+  allowed:['fish','lizard','bird','frog','squid','ammonite','insect','trilo'],
+  no:'Too big to be swallowed by a predator!',
+  type:'Coprolite (fossil poo)', cat:'Trace fossil', needs:'Dung buried quickly, then replaced by minerals', ex:'A huge T. rex coprolite from Saskatchewan, Canada, full of bone fragments',
+  notes:{ammonite:'Some ammonite shells carry tooth marks from mosasaurs, giant sea reptiles that bit them!'},
+  stages:[
+    {h:'Eaten', t:'Day 1', env:'auto', a:'alive', fx:['predator'], x:'A hungry predator spots the {A}… and gulps it down!'},
+    {h:'Digestion', t:'Minutes later', env:'auto', a:'gone', fx:['predator'], x:'Stomach acid digests most of the {A}. Tough bits like bones, scales or shell pieces may survive the trip.'},
+    {h:'Out the other end', t:'Next day', env:'auto', a:'dung', x:'The predator does a poo containing the undigested pieces of the {A}.'},
+    {h:'Burial', t:'Weeks later', env:'auto', a:'dung', b:2, fx:['sediment'], x:'The dung is buried by mud before it can break down or be eaten by dung-eating creatures.'},
+    {h:'Coprolite', t:'Millions of years', env:'auto', a:'coprolite', b:5, fx:['minerals'], x:'Minerals replace the dung and turn it to stone. A fossilised poo is called a coprolite!'},
+    {h:'Discovery', t:'Today', env:'exposed', a:'coprolite', fx:['dig'], x:'Scientists slice the coprolite open and spot pieces of the {A} inside. Coprolites are trace fossils that show what ancient animals ate.'}
+  ],
+  quiz:{q:'What is a coprolite?', o:['Fossilised dung (poo)','A fossil footprint','A type of amber'], why:'Coprolites are trace fossils that reveal ancient diets.'}
+},
+{ id:'grass', icon:'🌾', name:'Dies out on an open plain', d:'Dies in the open, with nothing to cover it.', proc:'No fossil: decay and weathering',
+  allowed:['trex','sauro','mammoth','sabre','bird','croc','lizard'],
+  no:'This animal didn’t live on open land.',
+  type:'No fossil formed', cat:'No fossil', needs:'Nothing protected it: no burial, plenty of oxygen, hungry scavengers', ex:'Bone-weathering studies at Amboseli, Kenya',
+  stages:[
+    {h:'Death', t:'Day 1', env:'grass', a:'dead', fx:['sun'], x:'The {A} dies out in the open, on a wide plain.'},
+    {h:'Scavengers', t:'Hours later', env:'grass', a:'dead', fx:['scav'], x:'Scavengers arrive and tear the body apart, scattering the bones.'},
+    {h:'Decomposers', t:'Weeks later', env:'grass', a:'skeleton', fx:['bacteria','scav'], x:'Insects, worms, bacteria and fungi finish off the soft parts.'},
+    {h:'Weathering', t:'Years later', env:'grass', a:'bleached', fx:['sun','rain'], x:'Sun, rain, heat and frost crack and flake the bones lying on the surface.'},
+    {h:'Gone', t:'Decades later', env:'grass', a:'gone', fx:['dust'], x:'The bones crumble to dust and their nutrients go back into the soil. No fossil forms.'},
+    {h:'Nothing to find', t:'Today', env:'grass', a:'gone', fx:['question'], x:'This is the most common ending of all. Only a tiny fraction of living things (well under 1%) ever become fossils, which is why every fossil is precious!'}
+  ],
+  quiz:{q:'Why do most animals never become fossils?', o:['They are eaten, rot or weather away before being buried','They are too small','Fossils only form in museums'], why:'Fossils need special luck, usually quick burial. Most remains are destroyed first.'}
+}
+];
+
+/* ---------- state & storage ---------- */
+const KEY = 'fossil-factory-v1';
+let SAVE = {found:{}, quiz:{}};
+try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && p.found) SAVE = {found:p.found||{}, quiz:p.quiz||{}}; } } catch(e) {}
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify(SAVE)); } catch(e) {} }
+
+const S = {a:null, s:null, i:0, maxSeen:0, done:false, view:'animals'};
+const $ = s => document.querySelector(s);
+const A = id => ANIMALS.find(a => a.id === id);
+const SC = id => SCEN.find(s => s.id === id);
+const fill = (txt, an) => txt.replace(/\{A\}/g, an.n);
+const shuffle = arr => arr.map(v => [Math.random(), v]).sort((a,b) => a[0]-b[0]).map(v => v[1]);
+
+/* ---------- views ---------- */
+function go(v){
+  S.view = v;
+  ['animals','scen','journey','col'].forEach(k => { $('#v-'+k).hidden = (k !== v); });
+  document.querySelectorAll('#steps button').forEach(b => {
+    const k = b.dataset.v;
+    b.classList.toggle('on', k === v);
+    b.disabled = (k === 'scen' && !S.a) || (k === 'journey' && !S.s);
+  });
+  updateProg();
+  if (v === 'animals') renderAnimals();
+  if (v === 'scen') renderScen();
+  if (v === 'col') renderCol();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('#steps button').forEach(b => b.addEventListener('click', () => go(b.dataset.v)));
+
+function updateProg(){
+  const n = Object.keys(SAVE.found).filter(k => SAVE.found[k] && SAVE.found[k].length).length;
+  $('#prog').textContent = n + ' of ' + SCEN.length + ' endings found';
+}
+
+function renderAnimals(){
+  $('#animal-grid').innerHTML = ANIMALS.map(a => {
+    const fates = SCEN.filter(s => s.allowed.includes(a.id)).length;
+    return `<button class="acard" data-a="${a.id}"><span class="em">${a.e}</span><b>${a.name}</b><small>${a.era}</small><span class="count">${fates} possible fates</span></button>`;
+  }).join('');
+  document.querySelectorAll('.acard').forEach(b => b.addEventListener('click', () => { S.a = b.dataset.a; go('scen'); }));
+}
+
+function renderScen(){
+  const an = A(S.a);
+  $('#chosen').innerHTML = `<span class="em">${an.e}</span><span>${an.name}</span><button id="chg">Change</button>`;
+  $('#chg').addEventListener('click', () => go('animals'));
+  const ok = SCEN.filter(s => s.allowed.includes(an.id)), notOk = SCEN.filter(s => !s.allowed.includes(an.id));
+  $('#scen-grid').innerHTML = ok.concat(notOk).map(s => {
+    const can = s.allowed.includes(an.id);
+    const done = (SAVE.found[s.id]||[]).includes(an.id);
+    return `<button class="scard" data-s="${s.id}" ${can ? '' : 'disabled'}>
+      ${done ? '<span class="done">✓ done</span>' : ''}
+      <span class="row"><span class="ic">${s.icon}</span><b>${s.name}</b></span>
+      <p>${s.d}</p>
+      <span class="proc">${s.proc}</span>
+      ${can ? '' : `<span class="why">Doesn’t fit: ${s.no}</span>`}
+    </button>`;
+  }).join('');
+  document.querySelectorAll('.scard:not(:disabled)').forEach(b => b.addEventListener('click', () => startJourney(b.dataset.s)));
+}
+
+function startJourney(sid){
+  S.s = sid; S.i = 0; S.maxSeen = 0; S.done = false;
+  go('journey');
+  renderStage(true);
+}
+
+/* ---------- scene drawing ---------- */
+const WATERY = new Set(['sea','deep','lagoon']);
+const PAL = {
+  sea:['#d9c39a','#c8b083','#e2d1ab'], deep:['#4a4640','#3c3934','#57524b'], lagoon:['#e2ddd0','#d1cab9','#c4bca9'],
+  river:['#c9a978','#b8955f','#d6b98a'], forest:['#6e5034','#5c432b','#7a5b3c'], beach:['#e8d39f'],
+  tar:['#4f4130','#3f3427','#615039'], ice:['#e9f2f9','#d3e4f0','#f4f9fc'], drycave:['#b08a5c','#9c7a50','#c09a6a'],
+  cave:['#ece6da','#ddd4c3','#f3eee5'], volcano:['#a49d97','#8f8882','#b8b2ac'], bog:['#4a3622','#3c2b1b','#5a4329'],
+  mud:['#e0c48f','#cfae75','#b98f5c'], dunes:['#eac17f','#ddb06c','#f0cc90'], spring:['#eef0ee','#dbe4e6','#f6f7f5'], grass:['#8a6a48']
+};
+
+function BG(env){
+  const sky = (a,b) => `<defs><linearGradient id="bgsky" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="230"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="600" height="230" fill="url(#bgsky)"/>`;
+  const under = (a,b,c) => `<rect y="230" width="600" height="40" fill="${a}"/><rect y="270" width="600" height="36" fill="${b}"/><rect y="306" width="600" height="34" fill="${c}"/><path d="M0 270Q150 265 300 271T600 268M0 306Q150 301 300 307T600 304" stroke="rgba(0,0,0,.14)" stroke-width="2" fill="none"/>`;
+  const hills = c => `<path d="M0 200Q100 140 200 190T400 178T600 168V230H0Z" fill="${c}"/>`;
+  const weed = x => `<path d="M${x} 230q-10-30 0-60q10-30 0-60" stroke="#2f7d4f" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M${x+14} 230q8-25 0-50q-8-25 0-45" stroke="#3c9a5f" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  switch(env){
+    case 'sea': return sky('#7cc6e6','#1f5d8c') + `<path d="M0 10Q50 4 100 10T200 10T300 10T400 10T500 10T600 10" stroke="#fff" stroke-opacity=".6" stroke-width="3" fill="none"/><polygon points="120,0 170,0 260,230 180,230" fill="#fff" opacity=".07"/><polygon points="380,0 420,0 500,230 440,230" fill="#fff" opacity=".06"/>` + weed(60) + weed(520) + under('#d9c8a0','#c4ae82','#a8916a');
+    case 'deep': return sky('#1d3a57','#0a1622') + `<polygon points="200,0 240,0 300,230 250,230" fill="#fff" opacity=".04"/>` + under('#3b3833','#2e2b27','#24221f');
+    case 'lagoon': return `<rect width="600" height="50" fill="#c6e9f6"/><defs><linearGradient id="bgw" gradientUnits="userSpaceOnUse" x1="0" y1="50" x2="0" y2="230"><stop offset="0" stop-color="#7fd8cf"/><stop offset="1" stop-color="#2f8487"/></linearGradient></defs><rect y="50" width="600" height="180" fill="url(#bgw)"/><path d="M0 50Q60 44 120 50T240 50T360 50T480 50T600 50" stroke="#fff" stroke-opacity=".7" stroke-width="3" fill="none"/><text x="40" y="44" font-size="34">🌴</text><text x="520" y="46" font-size="30">🌴</text>` + under('#d9d3c4','#c9c2b0','#b5ad99');
+    case 'river': return sky('#a7d8f0','#e6f4fb') + hills('#8fbf7a') + `<rect y="176" width="600" height="54" fill="#6f9fb0"/><path d="M0 182Q50 178 100 182T200 182T300 182T400 182T500 182T600 182" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none"/>` + under('#9c7b52','#86673f','#6e5333');
+    case 'forest': return sky('#bfe3c9','#eef7ee') + `<text x="20" y="200" font-size="80">🌲</text><text x="120" y="180" font-size="60">🌲</text><text x="430" y="190" font-size="70">🌲</text><text x="520" y="205" font-size="80">🌲</text><rect x="282" y="0" width="36" height="232" fill="#6b4a2b"/><path d="M290 20v60M300 90v70M308 40v50M292 170v50" stroke="#4e3520" stroke-width="2"/>` + under('#5a3e26','#4a321f','#3b2818');
+    case 'beach': return sky('#9fd6f2','#e9f6fc') + `<rect y="150" width="600" height="52" fill="#4aa3c7"/><path d="M0 200Q75 192 150 200T300 200T450 200T600 200V214H0Z" fill="#fff" opacity=".7"/><rect y="206" width="600" height="24" fill="#f0dcaa"/>` + under('#e8d39f','#d9c18a','#c7ac74');
+    case 'tar': return sky('#f4d9a6','#fbeed3') + hills('#c9b07a') + `<text x="60" y="210" font-size="44">🌳</text><text x="500" y="205" font-size="40">🌳</text>` + under('#b39a6b','#9b8257','#7f6945') + `<ellipse cx="300" cy="231" rx="160" ry="13" fill="#1b1712"/><ellipse cx="250" cy="228" rx="40" ry="3" fill="#fff" opacity=".18"/>`;
+    case 'ice': return sky('#cfe5f5','#f2f8fc') + `<polygon points="0,200 90,90 170,200" fill="#e9f3fa"/><polygon points="120,200 230,70 340,200" fill="#dde9f4"/><polygon points="380,200 480,100 600,200" fill="#e9f3fa"/><polygon points="230,70 205,100 255,100" fill="#fff"/>` + `<rect y="196" width="600" height="34" fill="#f4f9fd"/>` + under('#e6eff7','#cfdeeb','#b6cbde');
+    case 'drycave': return `<rect width="600" height="230" fill="#3a2a1d"/><ellipse cx="490" cy="70" rx="120" ry="80" fill="#f7d9a0"/><path d="M380 110Q440 120 500 112T610 120V160H380Z" fill="#e9c27e"/><text x="520" y="120" font-size="34">🌵</text><path d="M0 0H600V20Q500 40 380 30Q300 60 200 30Q100 50 0 30Z" fill="#2c2016"/>` + under('#9a7650','#7f6040','#664c32');
+    case 'cave': return `<rect width="600" height="230" fill="#2b2420"/><polygon points="270,0 330,0 400,230 200,230" fill="#ffe9a8" opacity=".1"/><g fill="#463a32"><polygon points="40,0 60,0 50,60"/><polygon points="110,0 140,0 125,90"/><polygon points="180,0 200,0 190,50"/><polygon points="400,0 425,0 412,80"/><polygon points="470,0 500,0 485,110"/><polygon points="540,0 560,0 550,55"/></g><g fill="#544538"><polygon points="70,230 90,230 80,170"/><polygon points="490,230 515,230 502,150"/><polygon points="540,230 555,230 548,195"/></g>` + under('#5c4b3c','#4b3d31','#3b3027');
+    case 'volcano': return sky('#f0a878','#968d88') + `<polygon points="-20,230 120,70 190,70 330,230" fill="#5b4b45"/><path d="M120 70L190 70L176 96L162 80L146 102L132 82Z" fill="#e8572a"/><circle cx="150" cy="40" r="30" fill="#7b736e" opacity=".85"/><circle cx="190" cy="20" r="24" fill="#8a827c" opacity=".75"/><circle cx="118" cy="16" r="20" fill="#8a827c" opacity=".75"/>` + under('#6d6560','#5a534f','#48423e');
+    case 'bog': return sky('#b9c4b0','#dfe3d6') + `<path d="M0 180Q150 160 300 175T600 165V200H0Z" fill="#7d8f68"/><rect y="196" width="600" height="34" fill="#3a2c1c"/><g stroke="#6b7a3a" stroke-width="3" stroke-linecap="round"><path d="M60 200v-40M70 200v-30M80 200v-45M520 200v-38M532 200v-28M545 200v-42"/></g>` + under('#3e2d1d','#33251a','#2a1e15');
+    case 'mud': return sky('#b6dcef','#eaf5fa') + hills('#9cc28a') + `<rect y="190" width="230" height="40" fill="#6da7bd"/><path d="M230 190Q245 210 260 230H230Z" fill="#6da7bd"/>` + under('#8a6a48','#76593b','#614930');
+    case 'dunes': return sky('#f6c98a','#fcebc8') + `<circle cx="520" cy="55" r="26" fill="#fff4cf"/><path d="M0 200Q120 120 260 195Q380 140 480 190Q550 160 600 180V230H0Z" fill="#e8bd78"/>` + under('#e3b874','#d0a462','#bb8f50');
+    case 'spring': return sky('#bfe0f0','#eef7fb') + hills('#c8b893') + `<ellipse cx="300" cy="232" rx="190" ry="18" fill="#e8a74a"/>` + under('#e9d9b8','#d8c39c','#c4ac82') + `<ellipse cx="300" cy="231" rx="165" ry="13" fill="#3fc1c9" stroke="#f2efe6" stroke-width="5"/>`;
+    case 'grass': return sky('#a9daf2','#eaf6fc') + hills('#a8cf86') + `<text x="70" y="226" font-size="64">🌳</text><text x="480" y="226" font-size="40">🌳</text>` + under('#7fb35a','#7c5f40','#634a32');
+    case 'exposed': {
+      const cols = ['#c9a46b','#b88c55','#d8b98a','#a87a48','#cfae7c','#9c6f40','#dcc39a','#b5865a'];
+      let s = sky('#9fd3f0','#e8f5fc') + `<rect y="230" width="600" height="110" fill="url(#bgsky)"/>`;
+      cols.forEach((c,i) => { s += `<rect y="${110+i*30}" width="600" height="30" fill="${c}"/>`; });
+      s += `<polygon points="130,108 250,196 360,196 480,108" fill="url(#bgsky)"/><path d="M130 108L250 196H360L480 108" stroke="#7a5532" stroke-width="3" fill="none"/><text x="18" y="104" font-size="30">🌿</text><text x="540" y="104" font-size="30">🌿</text>`;
+      return s;
+    }
+  }
+  return sky('#a7d8f0','#e6f4fb') + under('#9c7b52','#86673f','#6e5333');
+}
+
+function parts(n, cls, color, r, x0, x1, y0, y1){
+  let s = '';
+  for (let k = 0; k < n; k++){
+    const x = (x0 + Math.random()*(x1-x0)).toFixed(1), y = (y0 + Math.random()*(y1-y0)).toFixed(1), d = (Math.random()*3).toFixed(2);
+    s += `<circle class="${cls}" cx="${x}" cy="${y}" r="${r}" fill="${color}" style="animation-delay:-${d}s"/>`;
+  }
+  return s;
+}
+
+function FG(env, st, an, sc){
+  const fx = new Set(st.fx || []);
+  const b = st.b || 0, H = 66 * an.size, cy = 230 - H*0.45;
+  const water = WATERY.has(env);
+  let s = `<defs><radialGradient id="fgamber" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#ffd36b" stop-opacity=".45"/><stop offset="1" stop-color="#d9831a" stop-opacity=".85"/></radialGradient></defs>`;
+
+  if (fx.has('prints')){
+    for (let x = 40, k = 0; x < 560; x += 44, k++){
+      const y = 229 + (k % 2 ? 5 : 0);
+      s += `<ellipse cx="${x}" cy="${y}" rx="8" ry="3.5" fill="#3f2d1c" opacity=".75"/><circle cx="${x+9}" cy="${y-3}" r="1.8" fill="#3f2d1c"/><circle cx="${x+10}" cy="${y}" r="1.8" fill="#3f2d1c"/><circle cx="${x+9}" cy="${y+3}" r="1.8" fill="#3f2d1c"/>`;
+    }
+  }
+  if (st.a === 'amber' || fx.has('resinFull')){
+    const rx = Math.max(H*0.85, 42), ry = Math.max(H*0.65, 34);
+    s += `<ellipse cx="300" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#fgamber)" stroke="#b86a12" stroke-width="2"/><ellipse cx="${300-rx*0.35}" cy="${cy-ry*0.45}" rx="${rx*0.22}" ry="${ry*0.12}" fill="#fff" opacity=".55"/>`;
+  } else if (fx.has('resin')){
+    s += `<path d="M300 ${cy-H*1.4}q-14 ${H*0.6} 0 ${H*1.0}q14-${H*0.4} 0-${H*1.0}Z" fill="#e8a32a" opacity=".85"/><ellipse cx="300" cy="${cy}" rx="${H*0.7}" ry="${H*0.45}" fill="#f0b23a" opacity=".45"/>`;
+  }
+  if (fx.has('tar')) s += `<ellipse cx="300" cy="234" rx="160" ry="15" fill="#140f0a" opacity=".85"/>` + parts(6,'p-rise','#3a2f25',3,180,420,222,232);
+  if (fx.has('tarFull')) s += `<rect x="170" y="${230-H-8}" width="260" height="${H+16}" rx="22" fill="#140f0a" opacity=".55"/><text x="300" y="${230-H-14}" text-anchor="middle" class="lbl">tar soaks the bones</text>`;
+  if (fx.has('leaves')) s += `<text x="190" y="236" font-size="22">🍂</text><text x="360" y="234" font-size="20">🍂</text><text x="420" y="238" font-size="22">🍂</text>`;
+
+  if (b && env !== 'exposed'){
+    const pal = PAL[env] || PAL.river;
+    for (let i = 1; i <= b; i++){
+      const y = 230 - i*20;
+      s += `<path d="M0 ${y+2}Q150 ${y-3} 300 ${y+1}T600 ${y}V${y+20}H0Z" fill="${pal[(i-1)%pal.length]}" opacity=".8"/>`;
+    }
+  }
+
+  if (fx.has('ice')) s += `<rect x="150" y="${230-H-16}" width="300" height="${H+50}" rx="16" fill="#bfe3ff" opacity=".42" stroke="#8cc4ee" stroke-width="2"/><path d="M180 ${230-H}l20 18-8 14M420 ${230-H+10}l-16 16 10 12" stroke="#fff" stroke-width="2" fill="none"/>`;
+  if (fx.has('melt')) s += `<text x="190" y="${230-H-20}" font-size="22">💧</text><text x="390" y="${230-H}" font-size="20">💧</text><text x="300" y="40" text-anchor="middle" class="lbl">permafrost thawing</text>`;
+  if (fx.has('snow')) s += parts(40,'p-fall','#fff',2.5,0,600,10,200);
+  if (fx.has('sediment')) s += parts(34,'p-fall', water ? '#e9d7ad' : '#c9a978', 2.4, 0, 600, 60, 200) + `<text x="300" y="34" text-anchor="middle" class="lbl">sediment settling</text>`;
+  if (fx.has('flood')) s += `<path class="wave" d="M0 110Q75 92 150 110T300 110T450 110T600 110T750 110V232H0Z" fill="#7a5a3a" opacity=".5"/><text x="80" y="150" font-size="30">➡️</text><text x="470" y="150" font-size="30">➡️</text><text x="300" y="40" text-anchor="middle" class="lbl">flash flood</text>`;
+  if (fx.has('scav')){
+    s += water ? `<text class="bob" x="380" y="232" font-size="38">🦀</text><text class="bob" x="150" y="130" font-size="34">🐟</text>`
+               : `<text class="bob" x="110" y="70" font-size="38">🦅</text><text class="bob" x="440" y="60" font-size="30">🦅</text><text x="430" y="232" font-size="46">🐺</text>`;
+    s += `<text x="300" y="${water ? 34 : 110}" text-anchor="middle" class="lbl">scavengers</text>`;
+  }
+  if (fx.has('bacteria')) s += parts(16,'pulse','#7ed957',3,300-H*0.7,300+H*0.7,230-H*0.9,232) + `<text x="${300+H*0.7+8}" y="${230-H*0.5}" class="lbl">bacteria</text>`;
+  if (fx.has('pressure')) s += `<text x="120" y="56" font-size="30">⬇️</text><text x="285" y="56" font-size="30">⬇️</text><text x="450" y="56" font-size="30">⬇️</text><text x="300" y="86" text-anchor="middle" class="lbl">weight of the layers above</text>`;
+  if (fx.has('minerals')) s += parts(30,'p-seep','#7fe3ff',3,80,520,140,320) + parts(14,'p-seep','#ffffff',2.5,80,520,140,320) + parts(10,'p-seep','#c9a7ff',2.5,80,520,140,320) + `<text x="300" y="${Math.max(30, 222-b*20)}" text-anchor="middle" class="lbl">mineral-rich groundwater</text>`;
+  if (fx.has('water')) s += `<text x="${300-H*0.8}" y="${cy}" font-size="22">💧</text><text x="${300+H*0.6}" y="${cy-10}" font-size="22">💧</text><text x="300" y="${Math.max(30, 222-b*20)}" text-anchor="middle" class="lbl">groundwater dissolves the bones</text>`;
+  if (fx.has('uplift')) s += `<text x="40" y="330" font-size="30">⬆️</text><text x="530" y="330" font-size="30">⬆️</text><text x="300" y="40" text-anchor="middle" class="lbl">uplift and erosion</text>` + parts(14,'p-fall','#b88c55',2,140,480,110,190);
+  if (fx.has('sun')) s += `<circle cx="540" cy="50" r="24" fill="#ffd34d"/><g stroke="#ffd34d" stroke-width="4" stroke-linecap="round"><path d="M540 12v-6M540 94v-6M502 50h-6M584 50h-6M513 23l-4-4M571 81l-4-4M513 77l-4 4M571 19l-4 4"/></g>`;
+  if (fx.has('rain')) s += `<ellipse cx="160" cy="40" rx="60" ry="20" fill="#8c9aa3"/><ellipse cx="200" cy="30" rx="40" ry="18" fill="#9eabb3"/>` + parts(20,'p-fall','#5aa0d8',2,100,260,60,180);
+  if (fx.has('dry')) s += `<g class="shimmer" stroke="#f0a24a" stroke-width="3" fill="none" opacity=".6"><path d="M220 150q10-10 0-20t0-20M300 140q10-10 0-20t0-20M380 150q10-10 0-20t0-20"/></g><text x="300" y="70" text-anchor="middle" class="lbl">very dry air: no moisture for decay</text>`;
+  if (fx.has('sand')) s += parts(60,'p-blow','#d9a75a',2.2,0,600,40,225);
+  if (fx.has('dust')) s += parts(20,'p-blow','#9a7a55',2,100,500,150,230);
+  if (fx.has('ash')) s += `<rect width="600" height="230" fill="#6f6a66" opacity=".18"/>` + parts(50,'p-fall','#5f5a57',2.6,0,600,10,210);
+  if (fx.has('acid')) s += parts(10,'p-rise','#b8c96a',3,200,400,150,225) + `<text x="300" y="40" text-anchor="middle" class="lbl">acidic, cold, low-oxygen water</text>`;
+  if (fx.has('bubbles')) s += parts(12,'p-rise','rgba(255,255,255,.7)',3.5,240,360,150,225);
+  if (fx.has('noO2')) s += `<text x="300" y="40" text-anchor="middle" class="lbl">🚫 no oxygen down here</text>`;
+  if (fx.has('heat')) s += `<rect y="290" width="600" height="50" fill="#ff5a1f" opacity=".22"/><text x="20" y="330" class="lbl">🔥 heat from deep underground</text>`;
+  if (fx.has('drip')) s += parts(5,'p-drip','#9fd6ff',3,280,320,6,30) + `<text x="300" y="${Math.max(60, 200-b*20-H)}" text-anchor="middle" class="lbl">calcite-rich drips</text>`;
+  if (fx.has('steam')) s += `<g stroke="#fff" stroke-width="5" fill="none" opacity=".7" stroke-linecap="round"><path class="p-rise" d="M230 200q12-15 0-30t0-30"/><path class="p-rise" style="animation-delay:-1s" d="M300 190q12-15 0-30t0-30"/><path class="p-rise" style="animation-delay:-1.8s" d="M370 200q12-15 0-30t0-30"/></g>`;
+  if (fx.has('silica')) s += parts(18,'pulse','#ffffff',2.6,300-H*0.8,300+H*0.8,230-H,232) + `<text x="300" y="${Math.max(30, 222-b*20-H)}" text-anchor="middle" class="lbl">silica soaking in</text>`;
+  if (fx.has('sulfur')) s += parts(16,'pulse','#f4e04d',2.6,300-H*0.8,300+H*0.8,230-H,234) + `<text x="300" y="34" text-anchor="middle" class="lbl">sulfide + iron → pyrite</text>`;
+  if (fx.has('sparkle')) s += `<text x="${300-H*0.8}" y="${cy-H*0.3}" font-size="22">✨</text><text x="${300+H*0.5}" y="${cy+10}" font-size="18">✨</text>`;
+  if (fx.has('question')) s += `<text x="300" y="215" text-anchor="middle" font-size="60">❓</text>`;
+  if (fx.has('predator')){
+    const p = water ? '🦈' : (sc.id === 'tar' ? '🐺' : '🐊');
+    s += water ? `<text class="lunge" x="420" y="190" font-size="64">${p}</text>` : `<text class="lunge" x="420" y="234" font-size="60">${p}</text>`;
+  }
+  if (fx.has('dig')){
+    if (env === 'exposed') s += `<text x="368" y="176" font-size="42">🧑‍🔬</text><text x="215" y="182" font-size="26">⛏️</text><text x="242" y="196" font-size="20">🖌️</text>`;
+    else if (water) s += `<text x="440" y="230" font-size="42">🤿</text>`;
+    else s += `<text x="450" y="232" font-size="46">🧑‍🔬</text><text x="${300-H*0.9-28}" y="226" font-size="26">⛏️</text><text x="${300+H*0.6}" y="230" font-size="20">🔍</text>`;
+  }
+  return s;
+}
+
+function glyphHTML(an, state, sc){
+  if (state === 'dung' || state === 'coprolite') return `<span class="glyph" style="font-size:calc(.75*11cqw)">💩</span>`;
+  const teethOnly = an.id === 'shark' && (sc.id === 'sea' || sc.id === 'pyrite') && !['alive','dead'].includes(state);
+  if (teethOnly) return `<span class="glyph teeth">🦷🦷🦷</span>`;
+  const boneStates = ['skeleton','tarbone','crust','bleached'];
+  const bones = an.bones && boneStates.includes(state) ? '<span class="bones">🦴</span>' : '';
+  return `<span class="glyph">${an.e}${bones}</span>`;
+}
+
+function drawScene(sc, an, st, animateSink){
+  const env = st.env === 'auto' ? (an.hab === 'sea' ? 'sea' : 'river') : st.env;
+  $('#bg').innerHTML = BG(env);
+  const el = $('#animal');
+  el.className = 'animal st-' + st.a + ((st.fx||[]).includes('walk') ? ' walk' : '');
+  el.style.setProperty('--s', an.size);
+  el.innerHTML = glyphHTML(an, st.a, sc);
+  if (animateSink && (st.fx||[]).includes('sink')){ void el.offsetWidth; el.classList.add('sinking'); }
+  $('#fg').innerHTML = FG(env, st, an, sc);
+  $('#tlabel').textContent = '⏳ ' + st.t;
+  $('#xlabel').hidden = !(st.b > 0 && env !== 'exposed');
+}
+
+/* ---------- journey ---------- */
+function renderStepper(){
+  const sc = SC(S.s);
+  const items = sc.stages.map((st,k) => `<li><button data-k="${k}" class="${k===S.i && !S.done ? 'on' : ''} ${k<=S.maxSeen ? 'seen' : ''}" ${k>S.maxSeen ? 'disabled' : ''}>${k+1}. ${st.h}</button></li>`);
+  items.push(`<li><button data-k="end" class="end ${S.done ? 'on seen' : ''}" ${S.maxSeen < sc.stages.length-1 ? 'disabled' : ''}>🏁 Result</button></li>`);
+  $('#stepper').innerHTML = items.join('');
+  $('#stepper').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.k === 'end') showResult();
+    else { S.i = +b.dataset.k; S.done = false; renderStage(true); }
+  }));
+}
+
+function renderStage(anim){
+  const sc = SC(S.s), an = A(S.a), st = sc.stages[S.i];
+  S.maxSeen = Math.max(S.maxSeen, S.i);
+  drawScene(sc, an, st, anim);
+  const last = S.i === sc.stages.length - 1;
+  const note = S.i === 0 && sc.notes && sc.notes[an.id] ? `<div class="note">💡 ${sc.notes[an.id]}</div>` : '';
+  $('#panel').innerHTML = `
+    <div class="meta"><span class="chip">Step ${S.i+1} of ${sc.stages.length}</span><span class="chip time">⏳ ${st.t}</span></div>
+    <p class="kicker">${sc.icon} ${sc.name}: ${sc.proc}</p>
+    <h2>${st.h}</h2>
+    <p class="body">${fill(st.x, an)}</p>
+    ${note}
+    <div class="nav">
+      <button class="btn alt" id="prev" ${S.i===0 ? 'disabled' : ''}>← Back</button>
+      <button class="btn go" id="next">${last ? (sc.id==='grass' ? 'See what happened' : 'See your fossil 🎉') : 'Next step'}</button>
+    </div>`;
+  $('#prev').addEventListener('click', prev);
+  $('#next').addEventListener('click', next);
+  renderStepper();
+}
+function next(){
+  if (S.view !== 'journey') return;
+  const sc = SC(S.s);
+  if (S.done) return;
+  if (S.i < sc.stages.length - 1){ S.i++; renderStage(true); } else showResult();
+}
+function prev(){
+  if (S.view !== 'journey') return;
+  if (S.done){ S.done = false; renderStage(false); return; }
+  if (S.i > 0){ S.i--; renderStage(true); }
+}
+document.addEventListener('keydown', e => {
+  if (S.view !== 'journey' || e.target.closest('input,textarea')) return;
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') prev();
+});
+
+function showResult(){
+  const sc = SC(S.s), an = A(S.a);
+  S.done = true; S.i = sc.stages.length - 1; S.maxSeen = S.i;
+  drawScene(sc, an, sc.stages[S.i], false);
+  const list = SAVE.found[sc.id] || [];
+  if (!list.includes(an.id)) { list.push(an.id); SAVE.found[sc.id] = list; persist(); }
+  updateProg();
+  const none = sc.id === 'grass';
+  const chain = sc.stages.map(s => `<span>${s.h}</span>`).join('<em>→</em>');
+  const correct = sc.quiz.o[0];
+  const opts = shuffle(sc.quiz.o.slice());
+  $('#panel').innerHTML = `
+    <div class="result">
+      <p class="kicker">${none ? '😢 No fossil this time' : '🎉 Fossil formed!'} Your ${an.n}:</p>
+      <h2>${sc.type}</h2>
+      <span class="tag ${none ? 'none' : ''}">${sc.cat}</span>
+      <dl>
+        <dt>Process</dt><dd>${sc.proc}</dd>
+        <dt>${none ? 'What went wrong' : 'What made it possible'}</dt><dd>${sc.needs}</dd>
+        <dt>Real example</dt><dd>${sc.ex}</dd>
+      </dl>
+      <div class="chain">${chain}</div>
+      <div class="quiz">
+        <h3>Quick check: ${sc.quiz.q}</h3>
+        ${opts.map(o => `<button class="qopt" data-ok="${o === correct ? 1 : 0}">${o}</button>`).join('')}
+        <p class="qfeed" id="qfeed" hidden></p>
+      </div>
+      <div class="nav">
+        <button class="btn alt" id="again">← Replay steps</button>
+        <button class="btn" id="newfate">Same animal, new fate</button>
+        <button class="btn go" id="newanimal">New animal</button>
+      </div>
+    </div>`;
+  $('#panel').querySelectorAll('.qopt').forEach(b => b.addEventListener('click', () => {
+    const ok = b.dataset.ok === '1';
+    $('#panel').querySelectorAll('.qopt').forEach(x => { x.disabled = true; if (x.dataset.ok === '1') x.classList.add('right'); });
+    if (!ok) b.classList.add('wrong');
+    const f = $('#qfeed'); f.hidden = false;
+    f.innerHTML = (ok ? '<b>Correct!</b> ' : '<b>Not quite.</b> ') + sc.quiz.why;
+    if (ok){ SAVE.quiz[sc.id] = true; persist(); }
+  }));
+  $('#again').addEventListener('click', () => { S.i = 0; S.done = false; renderStage(true); });
+  $('#newfate').addEventListener('click', () => go('scen'));
+  $('#newanimal').addEventListener('click', () => go('animals'));
+  renderStepper();
+}
+
+/* ---------- collection ---------- */
+function renderCol(){
+  const ends = SCEN.filter(s => (SAVE.found[s.id]||[]).length).length;
+  const combos = SCEN.reduce((n,s) => n + s.allowed.length, 0);
+  const got = SCEN.reduce((n,s) => n + (SAVE.found[s.id]||[]).length, 0);
+  $('#col-sum').textContent = `${ends} of ${SCEN.length} endings found, ${got} of ${combos} animal and fate combinations tried`;
+  $('#col-grid').innerHTML = SCEN.map(s => {
+    const f = SAVE.found[s.id] || [];
+    return `<div class="ccard ${f.length ? '' : 'locked'}">
+      <div class="row"><span class="ic">${f.length ? s.icon : '🔒'}</span><b>${s.proc}${SAVE.quiz[s.id] ? ' ⭐' : ''}</b></div>
+      <p>${s.name}</p>
+      ${f.length ? `<div class="found" title="Animals tried">${f.map(id => A(id).e).join('')}</div><p>${f.length} of ${s.allowed.length} possible animals</p>` : `<p>Not found yet. Try one of ${s.allowed.length} animals that fit.</p>`}
+    </div>`;
+  }).join('');
+}
+$('#btn-col').addEventListener('click', () => go('col'));
+$('#col-back').addEventListener('click', () => go(S.s && S.done ? 'journey' : (S.a ? 'scen' : 'animals')));
+let resetArmed = false;
+$('#reset').addEventListener('click', () => {
+  if (!resetArmed){ resetArmed = true; $('#reset').textContent = 'Tap again to clear'; setTimeout(() => { resetArmed = false; $('#reset').textContent = 'Clear progress'; }, 3000); return; }
+  SAVE = {found:{}, quiz:{}}; persist(); resetArmed = false; $('#reset').textContent = 'Clear progress'; renderCol(); updateProg();
+});
+
+$('#surprise').addEventListener('click', () => {
+  const an = ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
+  const opts = SCEN.filter(s => s.allowed.includes(an.id));
+  S.a = an.id;
+  startJourney(opts[Math.floor(Math.random()*opts.length)].id);
+});
+
+go('animals');
+</script>
+</body>
+</html>
